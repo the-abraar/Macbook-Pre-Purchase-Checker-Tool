@@ -1,3 +1,5 @@
 .DS_Store
 *.tmp
 *.bin
+stress_test_data/
+**/stress_test_data/

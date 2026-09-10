@@ -41,6 +41,25 @@ Each model directory provides tailored checklists, known hardware defect warning
 
 ---
 
+## ⚡ Tiny File Stress Generator (`generated_tools/`)
+
+An ultra-fast multi-threaded generator ([`generated_tools/generate_stress_files.py`](generated_tools/generate_stress_files.py) / [`generate_stress_files.sh`](generated_tools/generate_stress_files.sh)) that generates thousands of tiny random files (**10B to 15KB**) totaling **10GB** (configurable) to stress-test external SSDs, USB-C ports, and USB bridge controllers.
+
+### Quick Commands:
+```bash
+# Generate 10 GB directly to external SSD:
+./generated_tools/generate_stress_files.sh -s 10GB -o /Volumes/YOUR_SSD/stress_test
+
+# Generate locally and benchmark transfer throughput:
+./generated_tools/generate_stress_files.sh -s 5GB --transfer-to /Volumes/YOUR_SSD
+
+# Clean up stress files:
+./generated_tools/generate_stress_files.sh -o /Volumes/YOUR_SSD/stress_test --cleanup
+```
+See [`generated_tools/README.md`](generated_tools/README.md) for full documentation and small-file throughput benchmarks.
+
+---
+
 ## 🇧🇩 Used Market Pricing & Buying Rules (Bangladesh)
 
 Buying a pre-owned MacBook from unauthorized or grey-market reseller shops (Multiplan, Elephant Road, Motaleb Plaza, Mirpur, or Bashundhara/JFP) carries specific risks like MDM bypasses, replaced copy parts, and swapped boards.
