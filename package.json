@@ -1,0 +1,20 @@
+{
+  "name": "macbook-pre-purchase-checker-web",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Idiot-proof diagnostic checklist, hardware testers, model benchmarks, and negotiation calculator for buying used Apple Silicon MacBooks.",
+  "scripts": {
+    "start": "./serve_web.sh",
+    "serve": "npx serve web",
+    "test": "node test/test_analyzer.js"
+  },
+  "keywords": [
+    "macbook",
+    "apple-silicon",
+    "pre-purchase",
+    "diagnostics",
+    "checklist"
+  ],
+  "author": "",
+  "license": "MIT"
+}

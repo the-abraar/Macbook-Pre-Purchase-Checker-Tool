@@ -1,0 +1,79 @@
+/* Screen Uniformity & Dead Pixel Test Overlay */
+.screen-test-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: #ffffff;
+  display: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.screen-test-overlay.active {
+  display: block;
+}
+
+.screen-test-hud {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  padding: 16px 28px;
+  border-radius: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  text-align: center;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  transition: opacity 0.4s ease;
+  max-width: 90vw;
+}
+
+.hud-badge {
+  font-size: 16px;
+  font-weight: 700;
+  color: #00e5ff;
+  margin-bottom: 4px;
+}
+
+.hud-desc {
+  font-size: 13px;
+  color: #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.hud-instructions {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin-bottom: 12px;
+}
+
+.key-tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.btn-exit-test {
+  background: #ff3b30;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-exit-test:hover {
+  background: #d32f2f;
+}

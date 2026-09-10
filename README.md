@@ -35,10 +35,38 @@ bash /Volumes/YOUR_USB_NAME/Mac_Pre_Purchase_Checker/run.sh
 
 ---
 
+## 🌐 1-Click Idiot-Proof Web Application (`web/`)
+
+If you want an idiot-proof visual interface for any non-technical buyer ("noob") to test any MacBook in a shop:
+
+```bash
+# 1-Click Launch: Starts local HTTP server and automatically opens browser:
+./serve_web.sh
+```
+
+### What's Built Into the Web App:
+1. **🧭 10-Step Idiot-Proof Wizard:** Visual step-by-step guidance through MDM bypass checks, serial matching, battery evaluation, and Apple diagnostics.
+2. **💻 Terminal Decoder ("Paste & Decode"):** Paste any output from `check_mac.sh` or macOS terminal commands and get an instant color-coded PASS / FAIL health scorecard.
+3. **⌨️ Interactive Mac Keyboard Tester:** Real-time on-screen Mac layout matrix verifying every key with a pass counter.
+4. **🖥️ Fullscreen Dead Pixel & Uniformity Tester:** 1-click test cycling white, black, RGB, and gray backgrounds (no internet needed).
+5. **🎙️ Microphone, Speaker & Camera Inspector:** Browser-based 5-second voice playback test and FaceTime camera inspection.
+6. **🎯 Model-Specific Benchmark Targets:** Reference Geekbench scores and SSD read/write speeds for M1, M2, M3, and M4.
+7. **💰 Bangladesh Reseller Negotiation & Cash Memo Calculator:** Automatically calculates price deductions in ৳ BDT based on defects found, with Bengali negotiation scripts and copyable cash memo legal clauses.
+8. **📴 100% Offline & PWA Ready:** Automatically cached via Service Worker so it works without Wi-Fi in reseller markets.
+
+### Hosting on Your Custom Domain:
+The `web/` folder is a **100% static, client-side web application** (zero backend / zero database). You can host it on any domain with:
+- **Cloudflare Pages / Vercel / Netlify:** Just point root to `web/` or upload the `web/` folder.
+- **GitHub Pages:** Deploy `web/` directly.
+- **Apache / Nginx / Cpanel:** Copy contents of `web/` into `public_html/`.
+
+---
+
 ## 🧭 Complete Suite Overview
 
 | Tool / Module | Location | Purpose |
 | :--- | :--- | :--- |
+| **MacPreCheck Web App** | [`web/`](web/) \| [`serve_web.sh`](serve_web.sh) | **Idiot-proof web UI:** Guided checklist, live testers, terminal decoder & BD bargaining calculator. |
 | **Interactive Master Menu** | [`run.sh`](run.sh) | Terminal UI launching all checks, diagnostics, and tools with 1 tap. |
 | **1-Click USB Builder** | [`setup_usb.sh`](setup_usb.sh) | Automatically prepares and syncs all tools to any inserted USB flash drive. |
 | **10s Automated Diagnostic** | [`check_mac.sh`](check_mac.sh) | Auto-detects M1–M4, checks MDM, iCloud lock, SSD, thermals, battery & charger. |

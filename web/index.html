@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MacPreCheck — Idiot-Proof MacBook Pre-Purchase Field Inspector</title>
+  <meta name="description" content="All-in-one pre-purchase inspection guide, hardware testers, model benchmarks, and negotiation calculator for buying used Apple Silicon MacBooks.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon-192.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0071e3">
+
+  <!-- FOUC Prevention Script (Modern Web Guidance) -->
+  <script>
+    (function() {
+      const stored = localStorage.getItem("macprecheck_theme");
+      if (stored === "dark") {
+        document.documentElement.classList.add("theme-dark");
+      } else if (stored === "light") {
+        document.documentElement.classList.add("theme-light");
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/keyboard.css">
+  <link rel="stylesheet" href="css/display_test.css">
+</head>
+<body>
+
+  <!-- Fullscreen Screen Test Overlay -->
+  <div id="screen-test-overlay" class="screen-test-overlay"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon-wrap">🍏</div>
+        <div class="brand-title-wrap">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h1 class="brand-title">MacPreCheck</h1>
+          </div>
+          <p class="brand-sub">Universal Pre-Purchase Diagnostic & Negotiation Suite</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-outline" id="theme-toggle-btn" title="Toggle Light/Dark Theme">🌓 Theme</button>
+        <button type="button" class="btn btn-outline" onclick="window.print()" title="Print Checklist">🖨️ Export PDF</button>
+        <button type="button" class="btn btn-secondary" id="btn-reset-all" title="Reset all checkboxes">🔄 Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <button type="button" class="nav-tab active" data-tab="wizard">📋 Guided Wizard</button>
+      <button type="button" class="nav-tab" data-tab="analyzer">💻 Terminal Decoder</button>
+      <button type="button" class="nav-tab" data-tab="keyboard">⌨️ Keyboard Matrix</button>
+      <button type="button" class="nav-tab" data-tab="screen">🖥️ Screen & Pixels</button>
+      <button type="button" class="nav-tab" data-tab="media">🎙️ Audio & Camera</button>
+      <button type="button" class="nav-tab" data-tab="benchmarks">🎯 Model Benchmarks</button>
+      <button type="button" class="nav-tab" data-tab="negotiation">💰 BD Negotiation & Memo</button>
+    </div>
+  </nav>
+
+  <!-- Hero Banner with Readiness Meter -->
+  <div class="hero-banner">
+    <div class="hero-card">
+      <div class="hero-info">
+        <span class="hero-badge">🛡️ Apple Silicon (M1 • M2 • M3 • M4)</span>
+        <h2 class="hero-title">Idiot-Proof MacBook Inspector</h2>
+        <p class="hero-desc">
+          Standing at a reseller shop? Follow these 10 verified steps in order before paying. Spot corporate MDM locks, fake batteries, degraded SSDs, and negotiate fair discounts in Bangladesh.
+        </p>
+      </div>
+
+      <!-- Circular Progress Meter -->
+      <div class="hero-progress-meter">
+        <div class="progress-circular">
+          <svg viewBox="0 0 60 60">
+            <circle class="progress-circle-bg" cx="30" cy="30" r="25" />
+            <circle id="hero-progress-circle" class="progress-circle-bar" cx="30" cy="30" r="25" />
+          </svg>
+          <span id="hero-progress-pct" class="progress-pct-label">0%</span>
+        </div>
+        <div class="progress-details">
+          <span class="progress-title" id="hero-readiness-title">Not Inspected</span>
+          <span class="progress-subtitle" id="hero-progress-count">0 of 28 checks completed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Jump Pills (for Wizard) -->
+  <div class="quick-jump-nav" id="quick-jump-nav">
+    <a href="#step-reset-mdm" class="quick-jump-pill">1. MDM Lock</a>
+    <a href="#step-serial-identity" class="quick-jump-pill">2. Serial Match</a>
+    <a href="#step-battery-charger" class="quick-jump-pill">3. Battery & Brick</a>
+    <a href="#step-storage-nand" class="quick-jump-pill">4. SSD Speed</a>
+    <a href="#step-display-pixels" class="quick-jump-pill">5. Screen & Pixels</a>
+    <a href="#step-keyboard-trackpad" class="quick-jump-pill">6. Keyboard</a>
+    <a href="#step-audio-camera-touchid" class="quick-jump-pill">7. Audio & Media</a>
+    <a href="#step-ports-thermal" class="quick-jump-pill">8. Ports & Heat</a>
+    <a href="#step-apple-diagnostics" class="quick-jump-pill">9. Diagnostics</a>
+    <a href="#step-cashmemo-negotiation" class="quick-jump-pill">10. BD Negotiation</a>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- TAB 1: GUIDED WIZARD -->
+    <section id="tab-wizard" class="tab-content active">
+      <div id="wizard-container"></div>
+    </section>
+
+    <!-- TAB 2: TERMINAL ANALYZER -->
+    <section id="tab-analyzer" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">💻 Terminal Output Decoder ("Paste & Decode")</h2>
+            <p class="card-subtitle">Did you run <code>check_mac.sh</code> or native terminal commands on the target Mac? Paste the text below to decode it into a plain-English health scorecard.</p>
+          </div>
+          <span class="badge badge-primary">AUTOMATIC AUDIT</span>
+        </div>
+
+        <div style="margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 4px;">PRESETS:</span>
+          <button type="button" class="btn btn-secondary" id="btn-sample-m1" style="font-size: 12.5px; padding: 6px 14px;">✅ Clean M1 Air (Pass)</button>
+          <button type="button" class="btn btn-secondary" id="btn-sample-mdm" style="font-size: 12.5px; padding: 6px 14px;">❌ MDM Locked (Danger)</button>
+          <button type="button" class="btn btn-secondary" id="btn-sample-batt" style="font-size: 12.5px; padding: 6px 14px;">⚠️ Fake Battery + Brick</button>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('analyzer-input').value = ''; document.getElementById('scorecard-result-container').classList.add('hidden')" style="font-size: 12.5px; padding: 6px 14px;">Clear</button>
+        </div>
+
+        <div class="analyzer-console">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <span class="terminal-title">Terminal Console Input (Paste Here)</span>
+            <span></span>
+          </div>
+          <div class="scanner-beam" id="scanner-beam"></div>
+          <textarea id="analyzer-input" class="analyzer-textarea" placeholder="Paste terminal output here (from check_mac.sh, system_profiler SPHardwareDataType, ioreg, or profiles status)..."></textarea>
+          <div class="analyzer-actions">
+            <span style="font-size: 12px; color: #888888;">Tip: Runs 100% locally in browser. No private serials or logs leave your computer.</span>
+            <button type="button" class="btn btn-primary" id="btn-analyze-output" style="padding: 9px 24px;">
+              🔍 Analyze My MacBook
+            </button>
+          </div>
+        </div>
+
+        <div id="scorecard-result-container" class="hidden" style="margin-top: 24px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: KEYBOARD MATRIX -->
+    <section id="tab-keyboard" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">⌨️ Interactive Mac Keyboard Matrix Tester</h2>
+            <p class="card-subtitle">Press keys on the physical MacBook keyboard. They will highlight yellow and turn <strong class="text-success">green</strong>. Test corners of spacebar and modifier keys.</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn btn-outline" id="btn-toggle-sound" style="font-size: 12px; padding: 6px 12px;">🔊 Sound: ON</button>
+            <button type="button" class="btn btn-secondary" id="btn-reset-keyboard" style="font-size: 12px; padding: 6px 12px;">🔄 Reset Matrix</button>
+          </div>
+        </div>
+
+        <div class="kb-toolbar">
+          <div id="keyboard-stats">
+            <span class="stat-badge">Tested: <strong>0 / 78 keys</strong> (0%)</span>
+          </div>
+          <span style="font-size: 12.5px; color: var(--text-muted);">Shortcuts like Tab, Space & modifiers are captured safely without leaving the tab.</span>
+        </div>
+
+        <div class="kb-container">
+          <div class="kb-frame" id="keyboard-grid-container"></div>
+        </div>
+
+        <!-- Tricky Keys Checklist -->
+        <h4 style="margin: 24px 0 12px; font-size: 15px;">🔍 Tricky Physical Keys Checklist:</h4>
+        <div class="tricky-keys-checklist">
+          <div class="tricky-key-item">
+            <span>🟢</span>
+            <div><strong>Spacebar Corners:</strong> Click far-left and far-right tips to verify scissor stabilizer bars.</div>
+          </div>
+          <div class="tricky-key-item">
+            <span>🟢</span>
+            <div><strong>Caps Lock LED:</strong> Confirm green hardware indicator light turns on when pressed.</div>
+          </div>
+          <div class="tricky-key-item">
+            <span>🟢</span>
+            <div><strong>Fn / Globe Key:</strong> Tap to verify macOS emoji / input switcher pops up.</div>
+          </div>
+          <div class="tricky-key-item">
+            <span>🟢</span>
+            <div><strong>Touch ID Button:</strong> Click mechanically to ensure spring rebound is firm.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SCREEN & PIXELS -->
+    <section id="tab-screen" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🖥️ Display Uniformity & Dead Pixel Inspector</h2>
+            <p class="card-subtitle">Spot dead sub-pixels, flexgate stage-lighting shadows, and aftermarket screen replacements.</p>
+          </div>
+          <span class="badge badge-danger">EXPENSIVE PART</span>
+        </div>
+
+        <div style="margin: 24px 0; text-align: center; background: var(--surface-2); padding: 30px; border-radius: var(--radius-md); border: 1px dashed var(--border-strong);">
+          <button type="button" class="btn btn-primary" id="btn-launch-screen-test-main" style="font-size: 16px; padding: 14px 32px;">
+            🖥️ Launch Fullscreen Display Tester Now
+          </button>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 10px;">
+            Shortcut: Click or press <kbd>Space</kbd> to cycle colors • Press <kbd>Esc</kbd> to exit tester
+          </p>
+        </div>
+
+        <div class="specs-grid" style="margin-top: 24px;">
+          <div class="spec-box">
+            <div class="spec-label">Pure White Screen</div>
+            <div class="spec-val" style="font-size: 13px; font-weight: normal; margin-top: 4px;">
+              Inspect for black dead pixels, bottom edge "stage light" shadows (flex cable tear), and dirty screen patches.
+            </div>
+          </div>
+          <div class="spec-box">
+            <div class="spec-label">Pure Black Screen</div>
+            <div class="spec-val" style="font-size: 13px; font-weight: normal; margin-top: 4px;">
+              Check in dim lighting for bright stuck sub-pixels, edge backlight bleeding, or Mini-LED dimming zone failures.
+            </div>
+          </div>
+          <div class="spec-box">
+            <div class="spec-label">True Tone Verification</div>
+            <div class="spec-val" style="font-size: 13px; font-weight: normal; margin-top: 4px;">
+              Open <strong>System Settings > Displays</strong>. If the <strong>True Tone</strong> toggle is absent, the display was swapped with a counterfeit panel!
+            </div>
+          </div>
+          <div class="spec-box">
+            <div class="spec-label">ProMotion 120Hz (Pro)</div>
+            <div class="spec-val" style="font-size: 13px; font-weight: normal; margin-top: 4px;">
+              On MacBook Pro models, verify Refresh Rate shows <strong>ProMotion (120Hz)</strong>. A 60Hz lock indicates a fake screen swap.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: AUDIO & CAMERA -->
+    <section id="tab-media" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🎙️ Audio, Microphone & Camera Inspector</h2>
+            <p class="card-subtitle">Test microphones, speaker cones at 100% volume, and the FaceTime HD camera directly in your browser.</p>
+          </div>
+          <span class="badge badge-primary">IN-BROWSER TEST</span>
+        </div>
+        <div id="tab-media-container"></div>
+      </div>
+    </section>
+
+    <!-- TAB 6: MODEL BENCHMARKS -->
+    <section id="tab-benchmarks" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🎯 Model Benchmark Targets & Red Flags</h2>
+            <p class="card-subtitle">Select the exact MacBook model you are inspecting to see expected Geekbench scores, SSD speeds, and known generation pitfalls.</p>
+          </div>
+          <span class="badge badge-primary">REFERENCE TARGETS</span>
+        </div>
+
+        <div class="model-picker-tabs" id="benchmark-model-tabs"></div>
+        <div id="benchmark-details"></div>
+      </div>
+    </section>
+
+    <!-- TAB 7: NEGOTIATION & CASH MEMO -->
+    <section id="tab-negotiation" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">💰 Bangladesh Reseller Negotiation & Cash Memo Guide</h2>
+            <p class="card-subtitle">Calculate legitimate price deductions in ৳ BDT based on defects found, and generate legal cash memo warranty clauses.</p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btn-copy-deal-summary" style="font-size: 12px;">📱 Copy Deal Summary</button>
+        </div>
+
+        <!-- Live Total Deduction Header -->
+        <div class="discount-total-card">
+          <div>
+            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--primary);">Recommended Cash Deduction</span>
+            <div class="discount-amount" id="calc-total-deduction">৳0 BDT</div>
+            <span style="font-size: 13.5px; color: var(--text-muted);">Deduct this amount directly from the seller's asking price.</span>
+          </div>
+          <div style="font-size: 13px; text-align: right; color: var(--text-secondary);">
+            <div>Based on actual Dhaka market replacement part rates</div>
+            <div style="font-weight: 600; color: var(--success); margin-top: 4px;">Never accept verbal promises — get it written!</div>
+          </div>
+        </div>
+
+        <h3 style="margin: 20px 0 10px; font-size: 16px;">Check Any Detected Flaws / Differences:</h3>
+        <div id="defect-checklist-container"></div>
+
+        <!-- Dialogue Script Box -->
+        <div class="card" id="negotiation-dialogue-box" style="background: var(--surface-2); margin: 20px 0; border: 1px dashed var(--primary);">
+          <p style="color: var(--text-muted);">Check off defects found above to generate ready-to-use bargaining scripts in Bangla.</p>
+        </div>
+
+        <h3 style="margin: 30px 0 12px; font-size: 16px;">📝 Must-Have Cash Memo Warranty Clauses (Show to Shopkeeper):</h3>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
+          Resellers frequently offer a useless "Service Warranty" (labor only). Demand a <strong>7 to 10 Days Unconditional Replacement Warranty</strong> and make sure these exact clauses are handwritten or printed with the shop seal!
+        </p>
+        <div id="cash-memo-clauses-container"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Service Worker & App Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

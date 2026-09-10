@@ -31,9 +31,10 @@ while true; do
     echo -e "  ${BOLD}[6] 📂 View Model Benchmark Targets${NC}     - Check M1/M2/M3/M4 expected scores"
     echo -e "  ${BOLD}[7] 🧾 Cash Memo & Warranty Guide${NC}       - Essential legal & warranty clauses in BD"
     echo -e "  ${BOLD}[8] 🏃 Run Complete All-in-One Suite${NC}   - Sequence automated audit + battery test"
+    echo -e "  ${BOLD}[9] 🌐 Launch Web App (Browser Suite)${NC}  - Idiot-proof visual UI, testers & calculator"
     echo -e "  ${BOLD}[0] 🚪 Exit${NC}"
     echo -e "${BOLD}${CYAN}======================================================================${NC}"
-    read -p " Enter your choice [0-8]: " CHOICE
+    read -p " Enter your choice [0-9]: " CHOICE
     echo ""
 
     case "$CHOICE" in
@@ -120,6 +121,12 @@ while true; do
             python3 "$SCRIPT_DIR/battery_extended_test/battery_stress_test.py" -d 3m
             echo ""
             read -p "Full suite finished! Press [Enter] to return to menu..."
+            ;;
+        9)
+            echo -e "${GREEN}Launching MacPreCheck Web Application...${NC}"
+            "$SCRIPT_DIR/serve_web.sh"
+            echo ""
+            read -p "Press [Enter] to return to menu..."
             ;;
         0)
             echo -e "${GREEN}Good luck with your purchase! Exiting.${NC}"
