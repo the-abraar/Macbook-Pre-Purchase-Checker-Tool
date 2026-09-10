@@ -295,9 +295,11 @@ fi
 # Geekbench 6 CLI Detection
 GB_CLI=""
 for PATH_CANDIDATE in \
+    "$(dirname "$0")/extra_tools/Geekbench 6.app/Contents/MacOS/geekbench6" \
+    "$(dirname "$0")/Geekbench 6.app/Contents/MacOS/geekbench6" \
     "/Applications/Geekbench 6.app/Contents/MacOS/geekbench6" \
     "/Volumes/*/Geekbench 6.app/Contents/MacOS/geekbench6" \
-    "$(dirname "$0")/Geekbench 6.app/Contents/MacOS/geekbench6"; do
+    "/Volumes/*/extra_tools/Geekbench 6.app/Contents/MacOS/geekbench6"; do
     if [[ -x "$PATH_CANDIDATE" ]]; then
         GB_CLI="$PATH_CANDIDATE"
         break

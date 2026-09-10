@@ -1,0 +1,7 @@
+# Ignore downloaded binaries, application bundles, and disk images
+*.dmg
+*.zip
+*.tar.gz
+*.app/
+*.tmp
+*.bin
