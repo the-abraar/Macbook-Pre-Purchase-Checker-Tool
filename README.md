@@ -60,6 +60,27 @@ See [`generated_tools/README.md`](generated_tools/README.md) for full documentat
 
 ---
 
+## 🔋 Battery Extended Performance & Stress Test (`battery_extended_test/`)
+
+A diagnostic suite ([`battery_extended_test/battery_stress_test.py`](battery_extended_test/battery_stress_test.py) / [`battery_stress_test.sh`](battery_extended_test/battery_stress_test.sh)) that tests the **actual physical performance, cell voltage balance, and voltage sag** of the battery under active multi-core load.
+
+### Why This Matters:
+- Cycle count can be easily falsified with inexpensive EEPROM programmers.
+- Old OEM batteries often suffer from internal resistance and cell collapse (causing sudden shutdowns at 35%).
+- A quality replacement battery with balanced cells is far superior to a dying original battery.
+
+### Quick Commands:
+```bash
+# Run standard 3-minute field test (unplug charger first!):
+./battery_extended_test/battery_stress_test.sh -d 3m
+
+# 5-minute deep inspection with balanced workload:
+./battery_extended_test/battery_stress_test.sh -d 5m -w balanced
+```
+See [`battery_extended_test/README.md`](battery_extended_test/README.md) for detailed interpretation of cell voltage delta (mV), voltage sag, and thermal dissipation.
+
+---
+
 ## 🇧🇩 Used Market Pricing & Buying Rules (Bangladesh)
 
 Buying a pre-owned MacBook from unauthorized or grey-market reseller shops (Multiplan, Elephant Road, Motaleb Plaza, Mirpur, or Bashundhara/JFP) carries specific risks like MDM bypasses, replaced copy parts, and swapped boards.
