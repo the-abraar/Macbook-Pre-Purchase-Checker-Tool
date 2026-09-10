@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacBook Offline Keyboard Inspection Tester</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --key-bg: #2a2a2a;
+            --key-border: #3d3d3d;
+            --key-text: #e0e0e0;
+            --key-active: #ffcc00;
+            --key-passed: #00e676;
+            --key-passed-text: #000000;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px;
+            user-select: none;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #00e5ff;
+        }
+        p {
+            color: #a0a0a0;
+            font-size: 14px;
+        }
+        #stats-bar {
+            display: flex;
+            gap: 20px;
+            background: #252525;
+            padding: 12px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #383838;
+        }
+        .stat-item {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-weight: 700;
+            color: #00e5ff;
+        }
+        #keyboard-frame {
+            background: #111111;
+            padding: 20px;
+            border-radius: 18px;
+            border: 2px solid #333333;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 980px;
+            width: 100%;
+        }
+        .key-row {
+            display: flex;
+            gap: 6px;
+            justify-content: space-between;
+        }
+        .key {
+            background: var(--key-bg);
+            border: 1px solid var(--key-border);
+            color: var(--key-text);
+            border-radius: 6px;
+            height: 48px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.1s ease, transform 0.05s ease;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .key.active {
+            background: var(--key-active) !important;
+            color: #000000 !important;
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+        .key.passed {
+            background: var(--key-passed);
+            color: var(--key-passed-text);
+            border-color: #00c853;
+        }
+        /* Specific Mac Key Sizes */
+        .key.w-12 { flex: 1.25; }
+        .key.w-15 { flex: 1.5; }
+        .key.w-17 { flex: 1.75; }
+        .key.w-20 { flex: 2.0; }
+        .key.w-22 { flex: 2.25; }
+        .key.w-space { flex: 5.5; }
+        .key.half-height { height: 22px; font-size: 10px; }
+        .arrow-col { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        #reset-btn {
+            margin-top: 24px;
+            background: #333333;
+            color: #ffffff;
+            border: 1px solid #555555;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #reset-btn:hover {
+            background: #444444;
+            border-color: #00e5ff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🍏 Offline MacBook Keyboard Matrix Inspector</h1>
+        <p>Press every key on the keyboard. Keys turn <b style="color: #00e676;">GREEN</b> once tested and functional.</p>
+    </header>
+
+    <div id="stats-bar">
+        <div class="stat-item">Keys Tested: <span class="stat-value" id="stat-count">0</span> / <span id="stat-total">78</span></div>
+        <div class="stat-item">Last Key Pressed: <span class="stat-value" id="stat-last">None</span></div>
+        <div class="stat-item">Status: <span class="stat-value" id="stat-status" style="color: #ffcc00;">Testing in Progress</span></div>
+    </div>
+
+    <div id="keyboard-frame">
+        <!-- Function Row -->
+        <div class="key-row">
+            <div class="key w-15" data-code="Escape">esc</div>
+            <div class="key" data-code="F1">F1</div>
+            <div class="key" data-code="F2">F2</div>
+            <div class="key" data-code="F3">F3</div>
+            <div class="key" data-code="F4">F4</div>
+            <div class="key" data-code="F5">F5</div>
+            <div class="key" data-code="F6">F6</div>
+            <div class="key" data-code="F7">F7</div>
+            <div class="key" data-code="F8">F8</div>
+            <div class="key" data-code="F9">F9</div>
+            <div class="key" data-code="F10">F10</div>
+            <div class="key" data-code="F11">F11</div>
+            <div class="key" data-code="F12">F12</div>
+            <div class="key w-12" data-code="TouchID">Touch ID</div>
+        </div>
+
+        <!-- Number Row -->
+        <div class="key-row">
+            <div class="key" data-code="Backquote">~ `</div>
+            <div class="key" data-code="Digit1">1</div>
+            <div class="key" data-code="Digit2">2</div>
+            <div class="key" data-code="Digit3">3</div>
+            <div class="key" data-code="Digit4">4</div>
+            <div class="key" data-code="Digit5">5</div>
+            <div class="key" data-code="Digit6">6</div>
+            <div class="key" data-code="Digit7">7</div>
+            <div class="key" data-code="Digit8">8</div>
+            <div class="key" data-code="Digit9">9</div>
+            <div class="key" data-code="Digit0">0</div>
+            <div class="key" data-code="Minus">- _</div>
+            <div class="key" data-code="Equal">= +</div>
+            <div class="key w-15" data-code="Backspace">delete</div>
+        </div>
+
+        <!-- QWERTY Row -->
+        <div class="key-row">
+            <div class="key w-15" data-code="Tab">tab</div>
+            <div class="key" data-code="KeyQ">Q</div>
+            <div class="key" data-code="KeyW">W</div>
+            <div class="key" data-code="KeyE">E</div>
+            <div class="key" data-code="KeyR">R</div>
+            <div class="key" data-code="KeyT">T</div>
+            <div class="key" data-code="KeyY">Y</div>
+            <div class="key" data-code="KeyU">U</div>
+            <div class="key" data-code="KeyI">I</div>
+            <div class="key" data-code="KeyO">O</div>
+            <div class="key" data-code="KeyP">P</div>
+            <div class="key" data-code="BracketLeft">[ {</div>
+            <div class="key" data-code="BracketRight">] }</div>
+            <div class="key" data-code="Backslash">\ |</div>
+        </div>
+
+        <!-- ASDF Row -->
+        <div class="key-row">
+            <div class="key w-17" data-code="CapsLock">caps lock</div>
+            <div class="key" data-code="KeyA">A</div>
+            <div class="key" data-code="KeyS">S</div>
+            <div class="key" data-code="KeyD">D</div>
+            <div class="key" data-code="KeyF">F</div>
+            <div class="key" data-code="KeyG">G</div>
+            <div class="key" data-code="KeyH">H</div>
+            <div class="key" data-code="KeyJ">J</div>
+            <div class="key" data-code="KeyK">K</div>
+            <div class="key" data-code="KeyL">L</div>
+            <div class="key" data-code="Semicolon">; :</div>
+            <div class="key" data-code="Quote">' "</div>
+            <div class="key w-17" data-code="Enter">return</div>
+        </div>
+
+        <!-- ZXCV Row -->
+        <div class="key-row">
+            <div class="key w-22" data-code="ShiftLeft">shift</div>
+            <div class="key" data-code="KeyZ">Z</div>
+            <div class="key" data-code="KeyX">X</div>
+            <div class="key" data-code="KeyC">C</div>
+            <div class="key" data-code="KeyV">V</div>
+            <div class="key" data-code="KeyB">B</div>
+            <div class="key" data-code="KeyN">N</div>
+            <div class="key" data-code="KeyM">M</div>
+            <div class="key" data-code="Comma">, &lt;</div>
+            <div class="key" data-code="Period">. &gt;</div>
+            <div class="key" data-code="Slash">/ ?</div>
+            <div class="key w-22" data-code="ShiftRight">shift</div>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="key-row">
+            <div class="key" data-code="Fn">fn</div>
+            <div class="key" data-code="ControlLeft">control</div>
+            <div class="key w-12" data-code="AltLeft">option</div>
+            <div class="key w-15" data-code="MetaLeft">command ⌘</div>
+            <div class="key w-space" data-code="Space">spacebar</div>
+            <div class="key w-15" data-code="MetaRight">command ⌘</div>
+            <div class="key w-12" data-code="AltRight">option</div>
+            <div class="key" data-code="ArrowLeft">◀</div>
+            <div class="arrow-col">
+                <div class="key half-height" data-code="ArrowUp">▲</div>
+                <div class="key half-height" data-code="ArrowDown">▼</div>
+            </div>
+            <div class="key" data-code="ArrowRight">▶</div>
+        </div>
+    </div>
+
+    <button id="reset-btn" onclick="resetKeyboard()">Reset Keyboard Matrix</button>
+
+    <script>
+        const testedKeys = new Set();
+        const allKeyElements = document.querySelectorAll(".key[data-code]");
+        const totalKeys = allKeyElements.length;
+        document.getElementById("stat-total").textContent = totalKeys;
+
+        function updateStats(lastCode) {
+            document.getElementById("stat-count").textContent = testedKeys.size;
+            document.getElementById("stat-last").textContent = lastCode || "None";
+            
+            if (testedKeys.size >= totalKeys - 2) {
+                const status = document.getElementById("stat-status");
+                status.textContent = "✅ ALL KEYS VERIFIED WORKING!";
+                status.style.color = "#00e676";
+            }
+        }
+
+        window.addEventListener("keydown", (e) => {
+            e.preventDefault();
+            const code = e.code;
+            const targetKey = document.querySelector(`.key[data-code="${code}"]`);
+            
+            if (targetKey) {
+                targetKey.classList.add("active");
+                targetKey.classList.add("passed");
+                testedKeys.add(code);
+            }
+            updateStats(e.key.length === 1 ? e.key.toUpperCase() : e.code);
+        });
+
+        window.addEventListener("keyup", (e) => {
+            e.preventDefault();
+            const code = e.code;
+            const targetKey = document.querySelector(`.key[data-code="${code}"]`);
+            if (targetKey) {
+                targetKey.classList.remove("active");
+            }
+        });
+
+        function resetKeyboard() {
+            testedKeys.clear();
+            allKeyElements.forEach(k => {
+                k.classList.remove("active", "passed");
+            });
+            document.getElementById("stat-status").textContent = "Testing in Progress";
+            document.getElementById("stat-status").style.color = "#ffcc00";
+            updateStats();
+        }
+    </script>
+</body>
+</html>

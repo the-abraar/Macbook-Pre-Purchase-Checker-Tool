@@ -19,6 +19,38 @@ Each model directory provides tailored checklists, known hardware defect warning
 
 ---
 
+## ⚡ Quick Start: Prepare Your USB Drive in 1 Click
+
+Before heading to the shop, plug your USB flash drive into your current Mac and run:
+```bash
+# 1-Click USB Builder: Automatically syncs all tools, scripts & offline testers to your USB:
+./setup_usb.sh
+```
+
+When you arrive at the shop, plug the USB drive into the target MacBook and run the **Interactive Master Menu**:
+```bash
+# Launches the interactive menu with all tests, guides, and tools:
+bash /Volumes/YOUR_USB_NAME/Mac_Pre_Purchase_Checker/run.sh
+```
+
+---
+
+## 🧭 Complete Suite Overview
+
+| Tool / Module | Location | Purpose |
+| :--- | :--- | :--- |
+| **Interactive Master Menu** | [`run.sh`](run.sh) | Terminal UI launching all checks, diagnostics, and tools with 1 tap. |
+| **1-Click USB Builder** | [`setup_usb.sh`](setup_usb.sh) | Automatically prepares and syncs all tools to any inserted USB flash drive. |
+| **10s Automated Diagnostic** | [`check_mac.sh`](check_mac.sh) | Auto-detects M1–M4, checks MDM, iCloud lock, SSD, thermals, battery & charger. |
+| **Extended Battery Stress Test**| [`battery_extended_test/`](battery_extended_test/) | Real-world discharge test: cell voltage delta (mV), voltage sag under load, and thermals. |
+| **Tiny File SSD Stress Test** | [`generated_tools/`](generated_tools/) | Generates thousands of 10B–15KB files to stress-test external SSDs and USB ports. |
+| **Offline Dead Pixel Checker** | [`extra_tools/screen_test.html`](extra_tools/screen_test.html) | Full-screen white, black, RGB & gray display inspection without needing Wi-Fi. |
+| **Offline Keyboard Tester** | [`extra_tools/keyboard_test.html`](extra_tools/keyboard_test.html) | Interactive visual Mac keyboard matrix tester that runs 100% locally in browser. |
+| **Model Benchmark Guides** | [`models/`](models/) | Expected Geekbench, SSD, and battery targets for M1, M2, M3, M4 Air & Pro models. |
+| **Shop Cash Memo Guide** | [`RECEIPT_AND_WARRANTY_GUIDE.md`](RECEIPT_AND_WARRANTY_GUIDE.md) | Essential warranty clauses, Bengali translations, and negotiation deduction amounts. |
+
+---
+
 ## ⚡ Universal Automated Inspection Script (`check_mac.sh`)
 
 [`check_mac.sh`](check_mac.sh) is a lightweight, color-coded Bash script that runs in **under 10 seconds** using **100% native macOS tools** (no `sudo`, no installation, no dependencies).

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacBook Display & Dead Pixel Inspection Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            cursor: pointer;
+            user-select: none;
+        }
+        #hud {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.75);
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 0 2px;
+        }
+        #badge {
+            font-weight: 700;
+            color: #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <span id="badge">Color: Pure White (1/6)</span><br>
+        Press <span class="key">Spacebar</span> or <span class="key">Click</span> to cycle colors • Press <span class="key">F</span> for Fullscreen • <span class="key">Esc</span> to exit
+    </div>
+
+    <script>
+        const colors = [
+            { name: "Pure White (1/6)", desc: "Check for: Dead pixels, yellow tint, bottom 'stage lighting'", bg: "#ffffff", hudColor: "#00ffcc" },
+            { name: "Pure Black (2/6)", desc: "Check for: Backlight bleed, Mini-LED blooming, bright stuck pixels", bg: "#000000", hudColor: "#00ffcc" },
+            { name: "Pure Red (3/6)", desc: "Check for: Dead red sub-pixels", bg: "#ff0000", hudColor: "#ffffff" },
+            { name: "Pure Green (4/6)", desc: "Check for: Dead green sub-pixels", bg: "#00ff00", hudColor: "#000000" },
+            { name: "Pure Blue (5/6)", desc: "Check for: Dead blue sub-pixels", bg: "#0000ff", hudColor: "#ffffff" },
+            { name: "50% Neutral Gray (6/6)", desc: "Check for: Uniformity issues, dirty screen effect (DSE)", bg: "#808080", hudColor: "#00ffcc" }
+        ];
+
+        let currentIndex = 0;
+        const hud = document.getElementById("hud");
+        const badge = document.getElementById("badge");
+
+        function updateColor() {
+            const current = colors[currentIndex];
+            document.body.style.backgroundColor = current.bg;
+            badge.textContent = `Color: ${current.name} - ${current.desc}`;
+            badge.style.color = current.hudColor;
+            
+            hud.style.opacity = "1";
+            clearTimeout(window.hudTimeout);
+            window.hudTimeout = setTimeout(() => {
+                hud.style.opacity = "0";
+            }, 3500);
+        }
+
+        function nextColor() {
+            currentIndex = (currentIndex + 1) % colors.length;
+            updateColor();
+        }
+
+        function prevColor() {
+            currentIndex = (currentIndex - 1 + colors.length) % colors.length;
+            updateColor();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        document.addEventListener("click", nextColor);
+
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space" || e.code === "ArrowRight") {
+                nextColor();
+            } else if (e.code === "ArrowLeft") {
+                prevColor();
+            } else if (e.key === "f" || e.key === "F") {
+                toggleFullscreen();
+            }
+        });
+
+        document.addEventListener("mousemove", () => {
+            hud.style.opacity = "1";
+            clearTimeout(window.hudTimeout);
+            window.hudTimeout = setTimeout(() => {
+                hud.style.opacity = "0";
+            }, 2500);
+        });
+
+        updateColor();
+    </script>
+</body>
+</html>
