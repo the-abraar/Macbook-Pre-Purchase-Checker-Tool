@@ -216,8 +216,13 @@ export function parseTerminalOutput(rawText) {
     result.overallVerdict = "HARDWARE_DEFECT";
   } else if (result.battery.status === "warning") {
     result.overallVerdict = "NEGOTIATE_DISCOUNT";
-  } else if (result.mdm.status === "pass" || result.hardware.serial) {
+  } else if (result.mdm.status === "pass") {
     result.overallVerdict = "RECOMMENDED";
+  } else if (result.mdm.status === "unknown") {
+    // Never claim "all clear" without an explicit clean MDM/DEP read — an
+    // unconfirmed MDM status is exactly the scenario this tool exists to catch.
+    result.overallVerdict = "VERIFY_MDM";
+    result.verdictReasons.push("Could not confirm MDM/DEP status from the pasted output — check manually (System Settings > Privacy & Security > Profiles, and watch for a 'Remote Management' screen) before buying.");
   } else {
     result.overallVerdict = "PARTIAL";
   }

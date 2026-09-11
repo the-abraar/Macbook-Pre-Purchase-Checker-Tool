@@ -94,13 +94,16 @@ if echo "$DEP_CHECK" | grep -q "Enrolled via DEP: No"; then
     echo -e "  • MDM Status:   ${GREEN}✅ CLEAN (Not DEP Enrolled / Free of corporate remote management)${NC}"
 elif echo "$DEP_CHECK" | grep -qi "Client is not DEP enabled"; then
     echo -e "  • MDM Status:   ${GREEN}✅ CLEAN (Client is not DEP enabled)${NC}"
-elif echo "$DEP_CHECK" | grep -qi "error"; then
-    echo -e "  • MDM Status:   ${GREEN}✅ CLEAN (Device enrollment service reports clean status)${NC}"
-else
+elif echo "$DEP_CHECK" | grep -q "Enrolled via DEP: Yes" || echo "$DEP_CHECK" | grep -qi "MDM enrollment: *Yes"; then
     SCORE_MDM="FAIL"
     echo -e "  • MDM Status:   ${RED}❌ RED ALERT: MDM CORPORATE PROFILE DETECTED!${NC}"
     echo -e "    ${RED}$DEP_CHECK${NC}"
     echo -e "    ${RED}⚠️  WALK AWAY! This Mac belongs to an enterprise/school organization.${NC}"
+else
+    SCORE_MDM="WARNING"
+    echo -e "  • MDM Status:   ${YELLOW}⚠️  UNKNOWN — could not confirm automatically. Verify manually!${NC}"
+    echo -e "    ${YELLOW}Raw output: $DEP_CHECK${NC}"
+    echo -e "    ${YELLOW}👉 ACTION: Check System Settings > Privacy & Security > Profiles (must be empty), and watch for a 'Remote Management' screen during setup.${NC}"
 fi
 echo ""
 
@@ -240,6 +243,11 @@ if [[ -n "$READ_BYTES" ]]; then
 fi
 rm -f "$TEST_FILE"
 
+if [[ -n "$READ_MB" ]]; then
+    echo -e "    ${YELLOW}⚠️  Note: read speed is measured right after writing, so macOS may serve it from RAM cache${NC}"
+    echo -e "    ${YELLOW}   rather than the physical drive. Treat it as a rough figure, not a lab-grade benchmark.${NC}"
+fi
+
 # Generation-specific SSD analysis
 if [[ -n "$WRITE_MB" ]]; then
     if [[ "$CHIP_GEN" == "M1" ]]; then
@@ -297,14 +305,22 @@ GB_CLI=""
 for PATH_CANDIDATE in \
     "$(dirname "$0")/extra_tools/Geekbench 6.app/Contents/MacOS/geekbench6" \
     "$(dirname "$0")/Geekbench 6.app/Contents/MacOS/geekbench6" \
-    "/Applications/Geekbench 6.app/Contents/MacOS/geekbench6" \
-    "/Volumes/*/Geekbench 6.app/Contents/MacOS/geekbench6" \
-    "/Volumes/*/extra_tools/Geekbench 6.app/Contents/MacOS/geekbench6"; do
+    "/Applications/Geekbench 6.app/Contents/MacOS/geekbench6"; do
     if [[ -x "$PATH_CANDIDATE" ]]; then
         GB_CLI="$PATH_CANDIDATE"
         break
     fi
 done
+# Separate unquoted glob pass so /Volumes/* is actually expanded by the shell
+# (a quoted "/Volumes/*/..." string never matches anything, it's a literal path).
+if [[ -z "$GB_CLI" ]]; then
+    for PATH_CANDIDATE in /Volumes/*/"Geekbench 6.app"/Contents/MacOS/geekbench6 /Volumes/*/extra_tools/"Geekbench 6.app"/Contents/MacOS/geekbench6; do
+        if [[ -x "$PATH_CANDIDATE" ]]; then
+            GB_CLI="$PATH_CANDIDATE"
+            break
+        fi
+    done
+fi
 
 if [[ -n "$GB_CLI" ]]; then
     echo -e "  ${CYAN}💡 Geekbench 6 CLI detected at: ${GB_CLI}${NC}"
@@ -362,7 +378,14 @@ echo -e "${BOLD}${CYAN}=========================================================
 echo -e "${BOLD}${CYAN}                PRE-PURCHASE FIELD VERDICT SCORECARD                  ${NC}"
 echo -e "${BOLD}${CYAN}======================================================================${NC}"
 
-echo -e "  • Corporate MDM Lock:    $([ "$SCORE_MDM" == "PASS" ] && echo -e "${GREEN}✅ CLEAN${NC}" || echo -e "${RED}❌ FAILED${NC}")"
+if [[ "$SCORE_MDM" == "PASS" ]]; then
+    MDM_LINE="${GREEN}✅ CLEAN${NC}"
+elif [[ "$SCORE_MDM" == "WARNING" ]]; then
+    MDM_LINE="${YELLOW}⚠️  UNKNOWN — VERIFY MANUALLY${NC}"
+else
+    MDM_LINE="${RED}❌ FAILED${NC}"
+fi
+echo -e "  • Corporate MDM Lock:    ${MDM_LINE}"
 echo -e "  • iCloud Activation Lock: $([ "$SCORE_ICLOUD" == "PASS" ] && echo -e "${GREEN}✅ CLEAN${NC}" || echo -e "${RED}❌ FAILED${NC}")"
 echo -e "  • Battery Telemetry:     $([ "$SCORE_BATT" == "PASS" ] && echo -e "${GREEN}✅ HEALTHY${NC}" || echo -e "${YELLOW}⚠️  CHECK WEAR / COPY${NC}")"
 echo -e "  • Storage & S.M.A.R.T.:  $([ "$SCORE_SSD" == "PASS" ] && echo -e "${GREEN}✅ VERIFIED${NC}" || echo -e "${RED}❌ FAILED / SLOW${NC}")"
@@ -374,6 +397,8 @@ if [[ "$SCORE_MDM" == "FAIL" || "$SCORE_ICLOUD" == "FAIL" ]]; then
     echo -e "  ${BOLD}${RED}🚨 OVERALL VERDICT: DO NOT BUY!${NC} Machine is locked to an organization or iCloud."
 elif [[ "$SCORE_SSD" == "FAIL" || "$SCORE_TOUCHID" == "FAIL" ]]; then
     echo -e "  ${BOLD}${RED}🚨 OVERALL VERDICT: HARDWARE DEFECT DETECTED!${NC} Check logic board or storage."
+elif [[ "$SCORE_MDM" == "WARNING" ]]; then
+    echo -e "  ${BOLD}${YELLOW}⚠️  OVERALL VERDICT: MDM STATUS UNCONFIRMED.${NC} Do not assume clean — verify manually before paying."
 elif [[ "$SCORE_BATT" == "WARNING" ]]; then
     echo -e "  ${BOLD}${YELLOW}⚠️  OVERALL VERDICT: NEGOTIATE DISCOUNT.${NC} Battery has notable wear or was replaced."
 else

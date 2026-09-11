@@ -795,11 +795,26 @@ function initAnalyzer() {
           Machine is free of MDM/iCloud locks, but battery or charger has issues. Demand a ৳6,000–৳8,000 deduction.
         </div>
       `;
-    } else {
+    } else if (res.overallVerdict === "RECOMMENDED") {
       verdictHtml = `
         <div class="alert-box alert-success" style="font-size: 15px;">
           <div class="alert-title">🎉 EXCELLENT PURCHASE CANDIDATE! ALL SCANS PASSED</div>
           Clean MDM, unlocked iCloud, healthy battery, verified SSD, and authentic biometric sensors.
+        </div>
+      `;
+    } else if (res.overallVerdict === "VERIFY_MDM") {
+      verdictHtml = `
+        <div class="alert-box alert-warning" style="font-size: 15px;">
+          <div class="alert-title">⚠️ MDM STATUS UNCONFIRMED — DO NOT SKIP THIS CHECK</div>
+          Your pasted output didn't include a clear MDM/DEP enrollment result, so it was NOT verified as clean.
+          Run <code>profiles status -type enrollment</code> yourself and watch for a "Remote Management" screen during setup before paying.
+        </div>
+      `;
+    } else {
+      verdictHtml = `
+        <div class="alert-box alert-warning" style="font-size: 15px;">
+          <div class="alert-title">⚠️ INCOMPLETE DATA — PASTE MORE OUTPUT</div>
+          Not enough was recognized in the pasted text to give a verdict. Run <code>check_mac.sh</code> (or the full manual checklist) and paste its complete output here.
         </div>
       `;
     }

@@ -65,4 +65,17 @@ const res3 = parseTerminalOutput(suspiciousBattLog);
 assert(res3.battery.status === "warning", "Flagged suspiciously low cycles on M1 as warning");
 assert(res3.overallVerdict === "NEGOTIATE_DISCOUNT", "Verdict is NEGOTIATE_DISCOUNT for suspicious battery");
 
+// Test 5: Serial present but MDM status never confirmed — must NOT be blessed as RECOMMENDED
+const unconfirmedMdmLog = `
+  • Machine:      MacBook Air (MacBookAir10,1)
+  • Logic Serial: C02FM3T1Q05D
+  • Reported Cycles:  185
+  • macOS Health:     92% (Condition: Normal)
+  • S.M.A.R.T. Status:✅ Verified (Self-monitoring sensors healthy)
+`;
+const res4 = parseTerminalOutput(unconfirmedMdmLog);
+assert(res4.mdm.status === "unknown", "MDM status stays unknown when not present in output");
+assert(res4.overallVerdict !== "RECOMMENDED", "Unconfirmed MDM status is never auto-blessed as RECOMMENDED");
+assert(res4.overallVerdict === "VERIFY_MDM", "Verdict flags MDM as needing manual verification");
+
 console.log("\n🎉 ALL ANALYZER TESTS PASSED SUCCESSFULLY!\n");
